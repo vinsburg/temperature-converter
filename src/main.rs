@@ -35,13 +35,12 @@ fn cels() -> Scale {
     }
 }
 
-
 fn rome() -> Scale {
     Scale {
         name: String::from("Rømer"),
-        ratio: 21.0/40.0,
-        del_x: -273.15,
-        del_y: 7.5,
+        ratio: 40.0/21.0,
+        del_x: -7.5,
+        del_y: 273.15,
     }
 }
 
