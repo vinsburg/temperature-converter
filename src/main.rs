@@ -1,6 +1,5 @@
 // Data source: [Conversion of scales of temperature](https://en.wikipedia.org/wiki/Conversion_of_scales_of_temperature)
-const ORIG_SCALE: fn() -> Scale = kelv;
-
+#[derive(Debug)]
 struct Scale {
     name: String,
     ratio: f64,
@@ -52,34 +51,30 @@ fn orig_to_dest(scale: Scale, orig_val: f64) -> f64 {
     (orig_val - scale.del_y) / scale.ratio - scale.del_x
 }
 
-fn dest_to_dest(scale_a: Scale, scale_b: Scale, dest_a_val: f64) -> f64 {
+fn convert(scale_a: Scale, scale_b: Scale, val_a: f64) -> f64 {
     orig_to_dest(
         scale_b,
         dest_to_orig(
             scale_a,
-            dest_a_val,
+            val_a,
         ),
     )
 }
 
-fn print_dest_to_dest(scale_a: fn() -> Scale, scale_b: fn() -> Scale, dest_a_val: f64) {
-    let dest_b_val = dest_to_dest(scale_a(), scale_b(), dest_a_val);
-    println!("{dest_a_val:.2} {:10} is {dest_b_val:.2} {:10}", scale_a().name, scale_b().name);
-}
-
-fn print_dest_to_orig(scale: fn() -> Scale, dest_val: f64) {
-    let orig_val = dest_to_orig(scale(), dest_val);
-    println!("{dest_val:.2} {:10} is {orig_val:.2} {:10}", scale().name, ORIG_SCALE().name);
+fn display_conversion(scale_a: fn() -> Scale, scale_b: fn() -> Scale, val_a: f64) {
+    let dest_b_val = convert(scale_a(), scale_b(), val_a);
+    println!("{val_a:.2} {:10} is {dest_b_val:.2} {:10}", scale_a().name, scale_b().name);
 }
 
 fn main() {
+    println!("{:?}", kelv());
+    println!("{:?}", cels());
+    println!("{:?}", fahr());
+    println!("{:?}", rome());
+
     let temperature = 0.0;
 
-    print_dest_to_orig(cels, temperature);
-    print_dest_to_orig(fahr, temperature);
-    print_dest_to_orig(rome, temperature);
-
-    print_dest_to_dest(cels, fahr, temperature);
-    print_dest_to_dest(fahr, cels, temperature);
-    print_dest_to_dest(cels, rome, temperature);
+    display_conversion(cels, fahr, temperature);
+    display_conversion(fahr, cels, temperature);
+    display_conversion(cels, rome, temperature);
 }
