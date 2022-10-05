@@ -19,11 +19,25 @@ const CELSIUS: ScaleData = ScaleData {
     del_y: 0.0,
 };
 
+const FAHRENHEIT: ScaleData = ScaleData {
+    ratio: 5.0/9.0,
+    del_x: 459.67,
+    del_y: 0.0,
+};
+
+const ROMER: ScaleData = ScaleData {
+    ratio: 40.0/21.0,
+    del_x: -7.5,
+    del_y: 273.15,
+};
+
 #[derive(Debug)]
 #[allow(dead_code)]
 enum ScaleType {
     Kelvin,
     Celsius,
+    Fahrenheit,
+    Romer,
 }
 
 impl ScaleType {
@@ -31,6 +45,8 @@ impl ScaleType {
         match self {
             ScaleType::Kelvin => KELVIN,
             ScaleType::Celsius => CELSIUS,
+            ScaleType::Fahrenheit => FAHRENHEIT,
+            ScaleType::Romer => ROMER,
         }
     }
 }
@@ -42,33 +58,24 @@ struct Temperature {
     scale: ScaleType,
 }
 
-// fn fahr() -> ScaleData {
-//     ScaleData {
-//         name: String::from("Fahrenheit"),
-//         ratio: 5.0/9.0,
-//         del_x: 459.67,
-//         del_y: 0.0,
-//     }
-// }
-
-// fn rome() -> ScaleData {
-//     ScaleData {
-//         name: String::from("Rømer"),
-//         ratio: 40.0/21.0,
-//         del_x: -7.5,
-//         del_y: 273.15,
-//     }
-// }
-
-// fn convert(scale_a: ScaleData, scale_b: ScaleData, val_a: f64) -> f64 {
-//     orig_to_dest(
-//         scale_b,
-//         dest_to_orig(
-//             scale_a,
-//             val_a,
-//         ),
-//     )
-// }
+impl Temperature {
+    fn convert_to_kelvin(&self) -> Temperature {
+        let scale_data = self.scale.get_scale_data();
+        Temperature {
+            value: (self.value + scale_data.del_x) * scale_data.ratio + scale_data.del_y,
+            scale: ScaleType::Kelvin,
+        }
+    }
+    
+    fn convert_to(&self, scale: ScaleType) -> Temperature {
+        let scale_data = scale.get_scale_data();
+        let kelvin_temp = self.convert_to_kelvin();
+        Temperature {
+            value: (kelvin_temp.value - scale_data.del_y) / scale_data.ratio - scale_data.del_x,
+            scale: scale,
+        }
+    }
+}
 
 // fn display_conversion(scale_a: fn() -> ScaleData, scale_b: fn() -> ScaleData, val_a: f64) {
 //     let val_b = convert(scale_a(), scale_b(), val_a);
@@ -76,12 +83,13 @@ struct Temperature {
 // }
 
 fn main() {
-    println!("KELVIN - {:?}", KELVIN);
+    println!("Kelvin {:?}", KELVIN);
     
-    let temp = Temperature { value: 0.0, scale: ScaleType::Celsius };
-    println!("Current temperature - {:?}", temp);
-    println!("Current scale data - {:?}", temp.scale.get_scale_data())
-
-    // println!("{temperature} Kelvin is {} base units", KELV.to_base_scale(temperature));
-    // println!("{temperature} base units is {} Kelvin", KELV.from_base_scale(temperature));
+    let temp = Temperature { value: 25.0, scale: ScaleType::Celsius };
+    println!("Current {:?}", temp);
+    println!("Current {:?}", temp.scale.get_scale_data());
+    println!("Baseline {:?}", temp.convert_to_kelvin());
+    println!("Roundtrip {:?}", temp.convert_to(ScaleType::Celsius));
+    println!("Alternative {:?}", temp.convert_to(ScaleType::Fahrenheit));
+    println!("Other Alternative {:?}", temp.convert_to(ScaleType::Romer));
 }
