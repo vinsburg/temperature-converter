@@ -1,38 +1,12 @@
 // Data source: [Conversion of scales of temperature](https://en.wikipedia.org/wiki/Conversion_of_scales_of_temperature)
 #[derive(Debug)]
-#[allow(dead_code)]
 struct ScaleData {
     ratio: f64,
     del_x: f64,
     del_y: f64,
 }
 
-const KELVIN: ScaleData = ScaleData {
-    ratio: 1.0,
-    del_x: 0.0,
-    del_y: 0.0,
-};
-
-const CELSIUS: ScaleData = ScaleData {
-    ratio: 1.0,
-    del_x: 273.15,
-    del_y: 0.0,
-};
-
-const FAHRENHEIT: ScaleData = ScaleData {
-    ratio: 5.0/9.0,
-    del_x: 459.67,
-    del_y: 0.0,
-};
-
-const ROMER: ScaleData = ScaleData {
-    ratio: 40.0/21.0,
-    del_x: -7.5,
-    del_y: 273.15,
-};
-
 #[derive(Debug)]
-#[allow(dead_code)]
 enum ScaleType {
     Kelvin,
     Celsius,
@@ -41,12 +15,28 @@ enum ScaleType {
 }
 
 impl ScaleType {
-    fn get_scale_data(&self) -> ScaleData {
-        match self {
-            ScaleType::Kelvin => KELVIN,
-            ScaleType::Celsius => CELSIUS,
-            ScaleType::Fahrenheit => FAHRENHEIT,
-            ScaleType::Romer => ROMER,
+    const fn get_scale_data(&self) -> ScaleData {
+        match *self {
+            ScaleType::Kelvin => ScaleData {
+                ratio: 1.0,
+                del_x: 0.0,
+                del_y: 0.0,
+            },
+            ScaleType::Celsius => ScaleData {
+                ratio: 1.0,
+                del_x: 273.15,
+                del_y: 0.0,
+            },
+            ScaleType::Fahrenheit => ScaleData {
+                ratio: 0.55555555555, // 5.0/9.0
+                del_x: 459.67,
+                del_y: 0.0,
+            },
+            ScaleType::Romer => ScaleData {
+                ratio: 1.90476190476, // 40.0/21.0
+                del_x: -7.5,
+                del_y: 273.15,
+            },
         }
     }
 }
@@ -83,7 +73,7 @@ impl Temperature {
 // }
 
 fn main() {
-    println!("Kelvin {:?}", KELVIN);
+    println!("Kelvin {:?}", ScaleType::Kelvin.get_scale_data());
     
     let temp = Temperature { value: 25.0, scale: ScaleType::Celsius };
     println!("Current {:?}", temp);
