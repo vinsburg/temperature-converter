@@ -15,7 +15,7 @@ struct SlopeIntercpet {
 
 impl Scale {
     const REF_SCALE: Scale = Scale::Kelvin;
-    const fn get_ref_slope_intercept(&self) -> SlopeIntercpet {
+    const fn get_slope_intercept(&self) -> SlopeIntercpet {
         match *self {
             Scale::Kelvin => SlopeIntercpet {
                 slope: 1.0,
@@ -47,18 +47,18 @@ struct Temperature {
 
 impl Temperature {
     fn convert_to_ref_scale(&self) -> Temperature {
-        let ref_scale_data = self.scale.get_ref_slope_intercept();
+        let slope_intercept = self.scale.get_slope_intercept();
         Temperature {
-            value: self.value * ref_scale_data.slope + ref_scale_data.y_intercept,
+            value: self.value * slope_intercept.slope + slope_intercept.y_intercept,
             scale: Scale::REF_SCALE,
         }
     }
     
     fn convert_to(&self, new_scale: Scale) -> Temperature {
-        let ref_scale_data = new_scale.get_ref_slope_intercept();
+        let slope_intercept = new_scale.get_slope_intercept();
         let ref_temp = self.convert_to_ref_scale();
         Temperature {
-            value: ( ref_temp.value - ref_scale_data.y_intercept ) / ref_scale_data.slope,
+            value: ( ref_temp.value - slope_intercept.y_intercept ) / slope_intercept.slope,
             scale: new_scale,
         }
     }
@@ -75,9 +75,9 @@ fn main() {
     let temp = Temperature { value: 25.0, scale: Scale::Celsius };
     println!("Current {:?}\n", temp);
     println!("The reference scale is {:?}\n", Scale::REF_SCALE);
-    println!("{:?} to {:?} {:?}\n", temp.scale, Scale::REF_SCALE, temp.scale.get_ref_slope_intercept());
+    println!("{:?} to {:?} {:?}\n", temp.scale, Scale::REF_SCALE, temp.scale.get_slope_intercept());
     let demo_scale = Scale::Kelvin;
-    println!("{:?} to {:?} {:?}\n", demo_scale, Scale::REF_SCALE, demo_scale.get_ref_slope_intercept());
+    println!("{:?} to {:?} {:?}\n", demo_scale, Scale::REF_SCALE, demo_scale.get_slope_intercept());
     
     println!("Let's convert the current temperature to various scales:");
     println!("{:>10.2} {:?} ", temp.convert_to_ref_scale().value, Scale::REF_SCALE, );
