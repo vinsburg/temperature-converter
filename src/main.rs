@@ -27,11 +27,11 @@ impl Scale {
             },
             Scale::Fahrenheit => SlopeIntercpet {
                 slope: 0.5555555555555556, // 5.0/9.0
-                y_intercept: 255.37222222222223,
+                y_intercept: 255.37222222222223, // 459.67*5.0/9.0
             },
             Scale::Romer => SlopeIntercpet {
                 slope: 1.9047619047619047, // 40.0/21.0
-                y_intercept: 258.8642857142857,
+                y_intercept: 258.8642857142857, // 273.15-7.5*40.0/21.0
             },
         }
     }
