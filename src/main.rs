@@ -72,7 +72,6 @@ impl Temperature {
 fn main() {
     println!("\nWelcome to the temperature converter demo!\n");
     
-    
     let temp = Temperature { value: 25.0, scale: Scale::Celsius };
     println!("Current {:?}\n", temp);
     println!("The reference scale is {:?}\n", Scale::REF_SCALE);
