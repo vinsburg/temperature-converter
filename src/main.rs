@@ -77,6 +77,6 @@ fn main() {
     
     println!("\nLet's convert the current temperature to various scales:");
     for scale in [Scale::Kelvin, Scale::Celsius, Scale::Fahrenheit, Scale::Romer] {
-        println!("T = {:>6.2}° {:?} ", temp.convert_to(scale).value, scale, );
+        println!("T = {:>6.2}° {:?} ", temp.convert_to(scale).value, &scale, );
     }
 }
