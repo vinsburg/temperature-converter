@@ -1,3 +1,3 @@
 # temperature-converter
 
-Rust CLI implementation of temperature converter.
+Rust demo of temperature converter
